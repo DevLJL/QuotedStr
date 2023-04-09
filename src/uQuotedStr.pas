@@ -15,9 +15,10 @@ type
   function Quo(const AValue: Currency; const ADecimalPlaces: Integer = 2): String; overload;
   function Quo(const AValue: TDate; const ADBName: TDBDriver): String; overload;
   function Quo(const AValue: TDateTime; const ADBName: TDBDriver): String; overload;
+  function QuoNull(const AValue: Integer): String; overload;
+  function QuoNull(const AValue: Int64): String; overload;
   function DateToSQLFormat(const AValue: TDate; const ADBName: TDBDriver): string;
   function DateTimeToSQLFormat(const AValue: TDateTime; const ADBName: TDBDriver): string;
-  function If0RetNull(AValue: Int64; AQuotedStr: Boolean = False): String;
 
 implementation
 
@@ -67,6 +68,20 @@ begin
   Result := QuotedStr(DateTimeToSQLFormat(AValue, ADBName));
 end;
 
+function QuoNull(const AValue: Integer): String;
+begin
+  Result := QuotedStr(AValue.ToString);
+  if (AValue = 0) then
+    Result := 'NULL';
+end;
+
+function QuoNull(const AValue: Int64): String;
+begin
+  Result := QuotedStr(AValue.ToString);
+  if (AValue = 0) then
+    Result := 'NULL';
+end;
+
 function DateToSQLFormat(const AValue: TDate; const ADBName: TDBDriver): string;
 begin
   case ADBName of
@@ -88,19 +103,6 @@ begin
     dbSQLITE,
     dbORACLE,
     dbPG: Result := FormatDateTime('yyyy-mm-dd hh:nn:ss', AValue);
-  end;
-end;
-
-function If0RetNull(AValue: Int64; AQuotedStr: Boolean): String;
-begin
-  case (AValue <= 0) of
-    True:  Result := 'NULL';
-    False: Begin
-      case AQuotedStr of
-        True:  Result := QuotedStr(AValue.ToString);
-        False: Result := AValue.ToString;
-      end;
-    End;
   end;
 end;
 
