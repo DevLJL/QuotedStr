@@ -17,6 +17,7 @@ type
   function Quo(const AValue: TDateTime; const ADBName: TDBDriver): String; overload;
   function DateToSQLFormat(const AValue: TDate; const ADBName: TDBDriver): string;
   function DateTimeToSQLFormat(const AValue: TDateTime; const ADBName: TDBDriver): string;
+  function If0RetNull(AValue: Int64; AQuotedStr: Boolean = False): String;
 
 implementation
 
@@ -87,6 +88,19 @@ begin
     dbSQLITE,
     dbORACLE,
     dbPG: Result := FormatDateTime('yyyy-mm-dd hh:nn:ss', AValue);
+  end;
+end;
+
+function If0RetNull(AValue: Int64; AQuotedStr: Boolean): String;
+begin
+  case (AValue <= 0) of
+    True:  Result := 'NULL';
+    False: Begin
+      case AQuotedStr of
+        True:  Result := QuotedStr(AValue.ToString);
+        False: Result := AValue.ToString;
+      end;
+    End;
   end;
 end;
 
