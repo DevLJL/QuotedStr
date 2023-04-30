@@ -15,6 +15,7 @@ type
   function Q(const AValue: Currency; const ADecimalPlaces: Integer = 2): String; overload;
   function Q(const AValue: TDate; const ADBName: TDBDriver): String; overload;
   function Q(const AValue: TDateTime; const ADBName: TDBDriver): String; overload;
+  function Q(const AValue: Boolean): String; overload;
   function QN(const AValue: Integer): String; overload;
   function QN(const AValue: Int64): String; overload;
   function DateToSQLFormat(const AValue: TDate; const ADBName: TDBDriver): string;
@@ -66,6 +67,14 @@ end;
 function Q(const AValue: TDateTime; const ADBName: TDBDriver): String;
 begin
   Result := QuotedStr(DateTimeToSQLFormat(AValue, ADBName));
+end;
+
+function Q(const AValue: Boolean): String; overload;
+begin
+  case AValue of
+    True:  Result := 'True';
+    False: Result := 'False';
+  end;
 end;
 
 function QN(const AValue: Integer): String;
